@@ -6,64 +6,68 @@
     <title>Pharos LeaseBridge | RWA Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #e2b053; --sky: #38bdf8; }
+        :root { 
+            --primary: #0f172a; 
+            --secondary: #1e293b; 
+            --accent: #3b82f6; 
+            --text: #f1f5f9; 
+            --border: rgba(255, 255, 255, 0.1); 
+        }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at 20% 20%, #0f172a 0%, #020617 100%);
-            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            background: var(--primary);
+            color: var(--text);
             min-height: 100vh;
         }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gold-border { border: 1px solid rgba(226, 176, 83, 0.3); }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid var(--border); }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <header class="max-w-7xl mx-auto flex justify-between items-center mb-12 glass p-5 rounded-2xl shadow-2xl">
+    <header class="max-w-7xl mx-auto flex justify-between items-center mb-12 glass p-6 rounded-xl shadow-lg">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900 shadow-[0_0_15px_rgba(245,158,11,0.4)]">LB</div>
-            <h1 class="text-xl font-extrabold tracking-tighter uppercase">Pharos <span class="text-[#e2b053]">LeaseBridge</span></h1>
+            <div class="w-10 h-10 bg-blue-600 rounded-md flex items-center justify-center font-bold text-white shadow-md">LB</div>
+            <h1 class="text-xl font-semibold">Pharos LeaseBridge</h1>
         </div>
-        <button id="connectBtn" class="bg-sky-600 hover:bg-sky-500 text-white px-8 py-2.5 rounded-xl font-bold transition-all text-sm shadow-lg shadow-sky-900/20">
+        <button id="connectBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-md font-medium transition-all shadow-md">
             Connect Wallet
         </button>
     </header>
 
     <main class="max-w-7xl mx-auto space-y-10">
         
-        <div id="walletInfo" class="hidden text-right text-xs text-sky-400 font-mono italic">
-            NODE_ACTIVE: <span id="userAddress" class="text-white">0x...</span>
+        <div id="walletInfo" class="hidden text-right text-sm text-blue-400">
+            Connected: <span id="userAddress" class="text-white">0x...</span>
         </div>
 
-        <section id="adminSection" class="hidden glass gold-border p-8 rounded-[2.5rem] animate-pulse-slow">
-            <h2 class="text-[10px] font-black text-[#e2b053] uppercase tracking-[0.4em] mb-6 flex items-center gap-2">
-                <span class="w-2.5 h-2.5 bg-[#e2b053] rounded-full animate-ping"></span> Master Asset Registration
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <button onclick="withdrawFunds()" class="border border-amber-500/40 text-[#e2b053] py-4 rounded-2xl font-bold text-xs hover:bg-amber-500/10 transition-all uppercase tracking-widest">Withdraw Revenue</button>
+        <section id="adminSection" class="hidden glass p-6 rounded-xl shadow-lg">
+            <h2 class="text-lg font-semibold mb-6">Admin: Register New Asset</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button onclick="withdrawFunds()" class="border border-blue-500/50 text-blue-400 py-3 rounded-md font-medium hover:bg-blue-500/10 transition-all">Withdraw Revenue</button>
                 <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input id="pName" type="text" placeholder="Property Name" class="bg-slate-950/50 border border-white/10 p-4 rounded-2xl text-sm outline-none focus:border-amber-500 transition-colors">
-                    <input id="pImg" type="text" placeholder="High-Res Image URL" class="bg-slate-950/50 border border-white/10 p-4 rounded-2xl text-sm outline-none focus:border-amber-500 transition-colors">
-                    <button onclick="mintProperty()" id="mintBtn" class="bg-[#e2b053] hover:bg-yellow-500 text-black font-black py-4 rounded-2xl transition-all uppercase text-xs shadow-xl">Deploy RWA to Chain</button>
+                    <input id="pName" type="text" placeholder="Property Name" class="bg-transparent border border-gray-600 p-3 rounded-md text-sm outline-none focus:border-blue-500 transition-colors">
+                    <input id="pImg" type="text" placeholder="Image URL" class="bg-transparent border border-gray-600 p-3 rounded-md text-sm outline-none focus:border-blue-500 transition-colors">
+                    <button onclick="mintProperty()" id="mintBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-md transition-all shadow-md">Deploy Asset</button>
                 </div>
             </div>
         </section>
 
         <section>
-            <div class="flex items-center justify-between mb-10">
-                <h2 class="text-3xl font-extrabold tracking-tight">Global RWA Registry</h2>
-                <div class="px-4 py-1.5 glass rounded-full text-[10px] font-bold text-slate-400 border border-white/5 uppercase tracking-tighter">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-semibold">RWA Registry</h2>
+                <div class="px-4 py-1 bg-gray-800 rounded-full text-xs font-medium text-gray-400">
                     Network: Pharos Atlantic
                 </div>
             </div>
             
-            <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="col-span-full py-32 text-center glass rounded-[3rem]">
-                    <div class="inline-block w-8 h-8 border-4 border-sky-500/30 border-t-sky-500 rounded-full animate-spin mb-4"></div>
-                    <p class="text-slate-500 text-sm font-medium tracking-wide">Syncing with Pharos Ledger...</p>
+            <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="col-span-full py-20 text-center glass rounded-xl">
+                    <div class="inline-block w-6 h-6 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+                    <p class="text-gray-500 text-sm">Loading assets...</p>
                 </div>
             </div>
         </section>
@@ -96,7 +100,7 @@
                 await refreshGallery(readOnlyContract);
             } catch (e) {
                 console.error("RPC Sync Error:", e);
-                document.getElementById('gallery').innerHTML = `<p class="col-span-full text-center text-red-400">Connection Error. Please check RPC URL.</p>`;
+                document.getElementById('gallery').innerHTML = `<p class="col-span-full text-center text-red-400 py-10">Connection error. Please check network.</p>`;
             }
         });
 
@@ -128,10 +132,10 @@
                 contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
                 
                 // UI Refresh
-                document.getElementById('userAddress').innerText = userAddr;
+                document.getElementById('userAddress').innerText = userAddr.slice(0,6) + '...' + userAddr.slice(-4);
                 document.getElementById('walletInfo').classList.remove('hidden');
-                document.getElementById('connectBtn').innerText = "Terminal Linked";
-                document.getElementById('connectBtn').classList.replace('bg-sky-600', 'bg-emerald-600');
+                document.getElementById('connectBtn').innerText = "Connected";
+                document.getElementById('connectBtn').classList.replace('bg-blue-600', 'bg-green-600');
 
                 // Admin Security Check
                 const ownerAddr = await contract.owner();
@@ -151,72 +155,76 @@
         // 3. CORE LOGIC: Using all Smart Contract Properties
         async function refreshGallery(targetContract) {
             const gallery = document.getElementById('gallery');
+            gallery.innerHTML = "";
             try {
-                const count = await targetContract.nextTokenId();
+                const count = Number(await targetContract.nextTokenId());
                 const rate = await targetContract.dailyRate();
                 const formattedRate = ethers.formatEther(rate);
                 const now = Math.floor(Date.now() / 1000);
                 
-                gallery.innerHTML = "";
-
-                if (Number(count) === 0) {
-                    gallery.innerHTML = `<p class="col-span-full text-center text-slate-500 py-10 glass rounded-3xl">Registry is currently empty. Waiting for Admin deployment.</p>`;
+                if (count === 1) {  // Assuming nextTokenId starts at 1 with no tokens
+                    gallery.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10 glass rounded-xl">No assets available yet.</p>`;
                     return;
                 }
 
-                for (let i = 0; i < Number(count); i++) {
-                    const info = await targetContract.propertyInfo(i);
-                    const rental = await targetContract.propertyRentals(i);
-                    const isRented = Number(rental.expiry) > now;
+                for (let i = 1; i < count; i++) {  // Start from 1 assuming token IDs begin at 1
+                    try {
+                        const info = await targetContract.propertyInfo(i);
+                        const rental = await targetContract.propertyRentals(i);
+                        const isRented = Number(rental.expiry) > now;
 
-                    gallery.innerHTML += `
-                        <div class="glass rounded-[2.5rem] overflow-hidden border border-white/5 flex flex-col p-5 group hover:border-sky-500/30 transition-all duration-500">
-                            <div class="relative overflow-hidden rounded-[1.8rem] mb-5">
-                                <img src="${info.imageUri}" class="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800'">
-                                <div class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-black text-white border border-white/10 uppercase tracking-widest">
-                                    ${isRented ? '🔒 Leased' : '💎 Available'}
+                        gallery.innerHTML += `
+                            <div class="glass rounded-xl overflow-hidden flex flex-col p-4 shadow-md hover:shadow-lg transition-shadow">
+                                <div class="relative overflow-hidden rounded-md mb-4">
+                                    <img src="${info.imageUri}" class="w-full h-48 object-cover transition-transform hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800'">
+                                    <div class="absolute top-2 right-2 bg-gray-800 px-2 py-1 rounded text-xs font-medium text-white">
+                                        ${isRented ? 'Leased' : 'Available'}
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex justify-between items-start mb-3">
-                                <h3 class="font-bold text-xl text-white tracking-tight">${info.name}</h3>
-                                <span class="text-[10px] font-mono text-sky-400 bg-sky-400/10 px-2 py-1 rounded-lg">${formattedRate} PHRS/D</span>
-                            </div>
+                                
+                                <div class="flex justify-between items-center mb-3">
+                                    <h3 class="font-semibold text-lg">${info.name}</h3>
+                                    <span class="text-xs text-blue-400 bg-blue-400/10 px-2 py-1 rounded">${formattedRate} PHRS/Day</span>
+                                </div>
 
-                            ${!isRented ? `
-                                <div class="mt-auto space-y-3">
-                                    <div class="bg-slate-950/50 rounded-2xl p-3 border border-white/5">
-                                        <input id="days-${i}" type="number" placeholder="Duration (Days)" 
+                                ${!isRented ? `
+                                    <div class="mt-auto space-y-2">
+                                        <input id="days-${i}" type="number" placeholder="Days" min="1"
                                             oninput="calcInvoice(${i}, ${formattedRate})"
-                                            class="w-full bg-transparent text-sm outline-none text-white placeholder:text-slate-600">
+                                            class="w-full bg-transparent border border-gray-600 p-2 rounded text-sm outline-none focus:border-blue-500">
+                                        <div id="inv-${i}" class="text-xs text-gray-400">Total: 0.00 PHRS</div>
+                                        <button onclick="rentAsset(${i})" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded font-medium transition-all">Lease Asset</button>
                                     </div>
-                                    <div id="inv-${i}" class="text-[10px] text-slate-500 px-1 font-bold uppercase tracking-widest">Invoice: 0.00 PHRS</div>
-                                    <button onclick="rentAsset(${i})" class="w-full bg-sky-600 hover:bg-sky-400 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg">Request Lease</button>
-                                </div>
-                            ` : `
-                                <div class="mt-auto glass bg-white/5 p-5 rounded-2xl border border-white/5">
-                                    <p class="text-[9px] text-slate-500 uppercase font-black mb-2 tracking-widest">Agreement Active Until</p>
-                                    <p class="text-sm font-bold text-orange-400">${new Date(Number(rental.expiry) * 1000).toLocaleString()}</p>
-                                    <div class="mt-3 w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                        <div class="bg-orange-400 h-full animate-pulse" style="width: 100%"></div>
+                                ` : `
+                                    <div class="mt-auto bg-gray-800 p-4 rounded-md">
+                                        <p class="text-xs text-gray-400 mb-1">Active Until</p>
+                                        <p class="text-sm font-medium text-orange-400">${new Date(Number(rental.expiry) * 1000).toLocaleString()}</p>
                                     </div>
-                                </div>
-                            `}
-                        </div>`;
+                                `}
+                            </div>`;
+                    } catch (err) {
+                        console.warn(`Failed to load asset ${i}:`, err);
+                    }
                 }
-            } catch (err) { console.error("Gallery Render Failed:", err); }
+                if (gallery.innerHTML === "") {
+                    gallery.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10 glass rounded-xl">No assets available yet.</p>`;
+                }
+            } catch (err) { 
+                console.error("Gallery Render Failed:", err); 
+                gallery.innerHTML = `<p class="col-span-full text-center text-red-400 py-10">Failed to load assets.</p>`;
+            }
         }
 
         // 4. INTERACTION HELPERS
         function calcInvoice(id, rate) {
             const val = document.getElementById(`days-${id}`).value;
-            document.getElementById(`inv-${id}`).innerText = `Invoice: ${(val * rate).toFixed(4)} PHRS`;
+            document.getElementById(`inv-${id}`).innerText = `Total: ${(val * rate).toFixed(2)} PHRS`;
         }
 
         async function rentAsset(id) {
             if (!contract) return connect();
             const days = document.getElementById(`days-${id}`).value;
-            if (!days || days <= 0) return alert("Please specify rental duration.");
+            if (!days || days <= 0) return alert("Please enter a valid number of days.");
             
             try {
                 const rate = await contract.dailyRate();
@@ -224,26 +232,26 @@
                 const tx = await contract.rentProperty(id, days, { value: total });
                 await tx.wait();
                 refreshGallery(contract);
-            } catch (e) { alert("Lease Failed: Check balance or network."); }
+            } catch (e) { alert("Lease failed: " + e.message); }
         }
 
         async function mintProperty() {
             const name = document.getElementById('pName').value;
             const img = document.getElementById('pImg').value;
-            if (!name || !img) return alert("Fill all fields.");
+            if (!name || !img) return alert("Please fill all fields.");
             
             const btn = document.getElementById('mintBtn');
             try {
-                btn.innerText = "Processing Deployment...";
+                btn.innerText = "Deploying...";
                 btn.disabled = true;
                 const tx = await contract.mintProperty(name, img);
                 await tx.wait();
                 document.getElementById('pName').value = "";
                 document.getElementById('pImg').value = "";
                 refreshGallery(contract);
-            } catch (e) { alert("Admin Authentication Required."); }
+            } catch (e) { alert("Deployment failed: " + e.message); }
             finally { 
-                btn.innerText = "Deploy RWA to Chain";
+                btn.innerText = "Deploy Asset";
                 btn.disabled = false;
             }
         }
@@ -252,8 +260,8 @@
             try {
                 const tx = await contract.withdraw();
                 await tx.wait();
-                alert("Withdrawal Complete.");
-            } catch (e) { alert("Unauthorized."); }
+                alert("Withdrawal successful.");
+            } catch (e) { alert("Withdrawal failed: " + e.message); }
         }
 
         // EVENT LISTENERS
