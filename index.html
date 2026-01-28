@@ -3,75 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeaseBridge | RWA Investment Portal</title>
+    <title>LeaseBridge | Pharos Atlantic RWA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #0f172a 0%, #020617 100%);
-            color: #e2e8f0;
-            min-height: 100vh;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .gold-glow {
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .pharos-gradient { background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="min-h-screen pb-10">
 
-    <header class="max-w-6xl mx-auto flex justify-between items-center mb-12">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center gold-glow">
-                <span class="text-white font-bold">L</span>
+    <nav class="p-6 max-w-7xl mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-extrabold pharos-gradient">PHAROS LEASEBRIDGE</h1>
+        <div class="flex gap-4">
+            <div id="netStatus" class="hidden md:flex items-center px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold">
+                WRONG NETWORK
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-amber-500">LEASE <span class="text-white">BRIDGE</span></h1>
+            <button id="connectBtn" onclick="init()" class="bg-sky-600 hover:bg-sky-500 px-6 py-2 rounded-xl font-bold transition-all shadow-lg shadow-sky-900/40">
+                Connect Wallet
+            </button>
         </div>
-        <button id="connectBtn" onclick="connect()" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded-lg font-semibold transition-all gold-glow">
-            Connect Wallet
-        </button>
-    </header>
+    </nav>
 
-    <main class="max-w-6xl mx-auto space-y-12">
+    <main class="max-w-7xl mx-auto px-6 mt-10 space-y-10">
         
-        <section class="text-center space-y-4">
-            <h2 class="text-4xl font-extrabold text-white">Institutional RWA Leasing</h2>
-            <p class="text-slate-400 max-w-2xl mx-auto">Access premium real-world properties on the Pharos Atlantic network. Secure instant yields through parallelized smart contracts.</p>
-            <div id="walletInfo" class="hidden text-amber-400 font-mono text-sm italic">
-                Active Investor: <span id="userAddress">0x...</span>
+        <div id="walletInfo" class="hidden glass p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <p class="text-slate-400 text-sm">Active Account</p>
+                <p id="userAddr" class="font-mono text-sky-400">0x00...</p>
             </div>
-        </section>
+            <div class="text-right">
+                <p class="text-slate-400 text-sm">Network</p>
+                <p class="font-bold text-white">Pharos Atlantic Testnet</p>
+            </div>
+        </div>
 
-        <section id="adminPanel" class="hidden glass p-8 rounded-3xl border-amber-500/30 border-2">
-            <h2 class="text-xl font-bold mb-4 text-amber-500">🛡️ Asset Management Console</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input id="pName" type="text" placeholder="Property Name" class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-amber-500 outline-none">
-                <input id="pImg" type="text" placeholder="Image URL" class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-amber-500 outline-none">
-                <button onclick="mintProperty()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl transition-all">Add to Registry</button>
+        <section id="adminPanel" class="hidden glass p-8 rounded-3xl border-2 border-sky-500/30">
+            <h2 class="text-xl font-bold mb-6 text-sky-400">🛡️ Asset Management Console</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs text-slate-400 ml-1">PROPERTY NAME</label>
+                    <input id="pName" type="text" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-sky-500 outline-none">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs text-slate-400 ml-1">IMAGE URL</label>
+                    <input id="pImg" type="text" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-sky-500 outline-none">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="mintProperty()" class="w-full bg-sky-600 hover:bg-sky-500 py-3 rounded-xl font-bold transition-all">MINT RWA</button>
+                </div>
             </div>
         </section>
 
         <section>
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-2xl font-bold text-white">Verified Asset Collection</h2>
-                <div class="h-[1px] flex-1 bg-slate-800"></div>
-            </div>
-            
+            <h2 class="text-3xl font-bold mb-8">Verified RWA Gallery</h2>
             <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <p class="col-span-full text-center text-slate-500 py-20 italic">Connect your wallet to synchronize with the Pharos Registry.</p>
+                <div class="col-span-full py-20 text-center glass rounded-3xl">
+                    <p class="text-slate-500 italic">Please connect wallet and switch to Pharos to load properties.</p>
+                </div>
             </div>
         </section>
     </main>
 
     <script>
-        const contractAddress = "0x8067fe980e975ba291752a57586dbeb09641e1c3";
-        const contractABI = [
+        const PHAROS_CHAIN_ID = '0x1f4'; // 500 in Hex. Ensure this matches Pharos Atlantic ID
+        const CONTRACT_ADDR = "0x8067fe980e975ba291752a57586dbeb09641e1c3";
+        const ABI = [
             "function mintProperty(string _name, string _image) external",
             "function rentProperty(uint256 _tokenId, uint64 _days) external payable",
             "function propertyInfo(uint256) view returns (string name, string imageUri, bool isVerified)",
@@ -83,34 +82,55 @@
 
         let provider, signer, contract;
 
-        // --- THE "SMOOTH" CONNECTION LOGIC ---
-        async function connect() {
-            if (window.ethereum) {
+        async function init() {
+            if (!window.ethereum) return alert("Install OKX or MetaMask!");
+            
+            try {
+                // 1. Force Network Switch to Pharos
                 try {
-                    // Using Ethers v6 syntax to match your working code
-                    provider = new ethers.BrowserProvider(window.ethereum);
-                    signer = await provider.getSigner();
-                    contract = new ethers.Contract(contractAddress, contractABI, signer);
-                    
-                    const addr = await signer.getAddress();
-                    document.getElementById('userAddress').innerText = addr;
-                    document.getElementById('walletInfo').classList.remove('hidden');
-                    document.getElementById('connectBtn').innerText = "Account Linked";
-                    document.getElementById('connectBtn').classList.replace('bg-amber-600', 'bg-emerald-600');
-                    
-                    // Check if Admin
-                    const contractOwner = await contract.owner();
-                    if(addr.toLowerCase() === contractOwner.toLowerCase()) {
-                        document.getElementById('adminPanel').classList.remove('hidden');
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: PHAROS_CHAIN_ID }],
+                    });
+                } catch (switchError) {
+                    // If network doesn't exist in wallet, add it
+                    if (switchError.code === 4902) {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: PHAROS_CHAIN_ID,
+                                chainName: 'Pharos Atlantic',
+                                nativeCurrency: { name: 'PHAR', symbol: 'PHAR', decimals: 18 },
+                                rpcUrls: ['https://rpc.pharos.network'], // Ensure this is the correct RPC
+                                blockExplorerUrls: ['https://explorer.pharos.network']
+                            }]
+                        });
                     }
-
-                    loadGallery();
-                } catch (err) {
-                    console.error(err);
-                    alert("Handshake failed. Ensure you are logged into OKX/MetaMask.");
                 }
-            } else {
-                alert("Please open in a Web3 Browser.");
+
+                // 2. Connect Wallet
+                provider = new ethers.BrowserProvider(window.ethereum);
+                const accounts = await provider.send("eth_requestAccounts", []);
+                signer = await provider.getSigner();
+                contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+
+                // 3. UI Updates
+                document.getElementById('userAddr').innerText = accounts[0];
+                document.getElementById('walletInfo').classList.remove('hidden');
+                document.getElementById('connectBtn').innerText = "Wallet Linked";
+                document.getElementById('connectBtn').classList.replace('bg-sky-600', 'bg-emerald-600');
+                document.getElementById('netStatus').classList.add('hidden');
+
+                // 4. Admin Check
+                const contractOwner = await contract.owner();
+                if(accounts[0].toLowerCase() === contractOwner.toLowerCase()) {
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                }
+
+                loadGallery();
+            } catch (err) {
+                console.error(err);
+                alert("Connection failed. Check network or permissions.");
             }
         }
 
@@ -120,73 +140,66 @@
                 const total = await contract.nextTokenId();
                 gallery.innerHTML = "";
 
+                if (Number(total) === 0) {
+                    gallery.innerHTML = `<div class="col-span-full py-20 text-center glass rounded-3xl text-slate-500">No properties minted yet. Admin must add assets.</div>`;
+                    return;
+                }
+
                 for (let i = 0; i < total; i++) {
                     const info = await contract.propertyInfo(i);
                     const rental = await contract.propertyRentals(i);
                     const now = Math.floor(Date.now() / 1000);
                     const isOccupied = Number(rental.expiry) > now;
 
-                    const card = `
-                        <div class="glass rounded-3xl overflow-hidden group hover:border-amber-500/50 transition-all duration-500">
-                            <div class="relative">
-                                <img src="${info.imageUri}" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=400'">
-                                <div class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[10px] font-bold tracking-widest text-white">
-                                    ID #${i}
-                                </div>
-                            </div>
-                            <div class="p-6 space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="text-xl font-bold text-white">${info.name}</h3>
-                                    <span class="text-xs font-bold ${isOccupied ? 'text-rose-400' : 'text-emerald-400'}">
-                                        ${isOccupied ? '● RENTED' : '● AVAILABLE'}
+                    gallery.innerHTML += `
+                        <div class="glass rounded-3xl overflow-hidden border border-slate-700 hover:border-sky-500/50 transition-all">
+                            <img src="${info.imageUri}" class="w-full h-56 object-cover" onerror="this.src='https://via.placeholder.com/400x250?text=Premium+Asset'">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xl font-bold">${info.name}</h3>
+                                    <span class="px-3 py-1 rounded-lg text-[10px] font-bold ${isOccupied ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}">
+                                        ${isOccupied ? 'OCCUPIED' : 'AVAILABLE'}
                                     </span>
                                 </div>
-                                
                                 ${!isOccupied ? `
-                                    <div class="space-y-3">
-                                        <input id="days-${i}" type="number" placeholder="Duration (Days)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm outline-none focus:border-amber-500">
-                                        <button onclick="rentAsset(${i})" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-900/20">Sign Investment Lease</button>
-                                    </div>
+                                    <input id="days-${i}" type="number" placeholder="Duration (Days)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 mb-3 outline-none focus:border-sky-500">
+                                    <button onclick="rentAsset(${i})" class="w-full bg-sky-600 hover:bg-sky-500 py-3 rounded-xl font-bold transition-all">Rent Property</button>
                                 ` : `
-                                    <div class="bg-slate-800/50 rounded-xl p-4 text-center">
-                                        <p class="text-slate-400 text-xs uppercase tracking-tighter">Availability Restored On</p>
-                                        <p class="text-amber-500 font-bold">${new Date(Number(rental.expiry) * 1000).toLocaleDateString()}</p>
+                                    <div class="bg-slate-900 p-4 rounded-xl text-center">
+                                        <p class="text-xs text-slate-500">Available on</p>
+                                        <p class="font-bold text-sky-400">${new Date(Number(rental.expiry) * 1000).toLocaleDateString()}</p>
                                     </div>
                                 `}
                             </div>
                         </div>
                     `;
-                    gallery.innerHTML += card;
                 }
             } catch (err) { console.error(err); }
         }
 
         async function rentAsset(id) {
             const days = document.getElementById(`days-${id}`).value;
-            if(!days) return alert("Enter lease duration");
-            
+            if(!days) return alert("Select duration");
             try {
                 const rate = await contract.dailyRate();
-                // Ethers v6 BigInt Math
                 const totalCost = rate * BigInt(days);
-
                 const tx = await contract.rentProperty(id, days, { value: totalCost });
                 await tx.wait();
-                alert("Transaction Finalized on Pharos Atlantic!");
+                alert("Success!");
                 loadGallery();
-            } catch (err) {
-                alert("Check balance or duration.");
-            }
+            } catch (err) { alert("Transaction Failed."); }
         }
 
         async function mintProperty() {
             const name = document.getElementById('pName').value;
             const img = document.getElementById('pImg').value;
+            if(!name || !img) return alert("Fill all fields");
             try {
-                const tx = await contract.createProposal(name); // Note: Ensure your contract function name matches here
+                const tx = await contract.mintProperty(name, img);
                 await tx.wait();
+                alert("Property Added!");
                 loadGallery();
-            } catch (err) { alert("Admin Action Failed."); }
+            } catch (err) { alert("Admin Only Error"); }
         }
     </script>
 </body>
