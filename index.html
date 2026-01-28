@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharos LeaseBridge | RWA Marketplace</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #00f2ff; 
+            --purple: #7000ff;
+            --bg: #050b14; 
+            --glass: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body { 
+            background: var(--bg); 
+            background-image: radial-gradient(circle at 50% -20%, #1a1a3a, transparent);
+            color: white; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Design */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { font-size: 28px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(90deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .btn {
+            background: linear-gradient(45deg, var(--accent), var(--purple));
+            border: none; color: white; padding: 16px; border-radius: 16px; width: 100%; 
+            font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+        }
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        .property-card { overflow: hidden; position: relative; }
+        .property-img { width: 100%; height: 200px; object-fit: cover; border-radius: 18px; margin-bottom: 15px; }
+        
+        .label { color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+        .value { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: #fff; }
+
+        input { 
+            background: rgba(0,0,0,0.4); border: 1px solid #333; color: white; 
+            padding: 14px; border-radius: 12px; width: 100%; box-sizing: border-box; 
+            margin: 10px 0 20px 0; font-size: 16px;
+        }
+
+        .status-pill { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: #10b981; margin-bottom: 10px; }
+        
+        .timer-box { background: rgba(0, 242, 255, 0.1); border: 1px dashed var(--accent); padding: 15px; border-radius: 14px; text-align: center; }
+        .timer-val { font-size: 24px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+        
+        #walletInfo { font-size: 13px; color: #aaa; margin-top: 10px; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">LEASEBRIDGE</div>
+        <div style="font-size: 12px; color: #888; margin-top: 4px;">PHAROS ATLANTIC RWA PROTOCOL</div>
+    </div>
+
+    <div class="glass" id="connectionArea">
+        <button class="btn" onclick="initWallet()" id="mainBtn">Connect Wallet</button>
+        <div id="walletInfo" style="text-align: center;">Click to link your Pharos wallet</div>
+    </div>
+
+    <div class="glass property-card">
+        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1000" class="property-img">
+        <div class="status-pill">AVAILABLE FOR RENT</div>
+        
+        <div class="label">Token ID</div>
+        <div class="value">Asset #0001 (Luxury HQ)</div>
+
+        <div class="label">Current Owner</div>
+        <div class="value" style="font-size: 14px; font-family: monospace;">0x8067...e1c3</div>
+
+        <div class="label">Rental Duration (Days)</div>
+        <input type="number" id="rentalDays" placeholder="Enter number of days" min="1" value="1">
+
+        <button class="btn" onclick="executeRent()">Sign Rental Agreement</button>
+    </div>
+
+    <div class="glass">
+        <div class="label" style="text-align: center;">Rental Expiry Countdown</div>
+        <div class="timer-box" style="margin-top:10px;">
+            <div id="timeRemaining" class="timer-val">00:00:00:00</div>
+        </div>
+    </div>
+
+    <script>
+        const CONTRACT_ADDR = "0x8067fe980e975ba291752a57586dbeb09641e1c3";
+        const ABI = [
+            "function rentProperty(uint256 _tokenId, uint64 _days) external payable",
+            "function propertyRentals(uint256) public view returns (address renter, uint64 expiry)",
+            "function dailyRate() public view returns (uint256)"
+        ];
+
+        let provider, signer, contract;
+
+        async function initWallet() {
+            // Check for injected provider (MetaMask, Trust, Brave, etc.)
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    
+                    contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
+                    
+                    document.getElementById('walletInfo').innerText = `Connected: ${address}`;
+                    document.getElementById('mainBtn').innerText = "Wallet Linked";
+                    document.getElementById('mainBtn').style.background = "#111";
+                    
+                    // Start checking for expiry every second
+                    startExpiryTracker();
+                } catch (error) {
+                    console.error("User denied account access");
+                }
+            } else {
+                alert("Please open this page inside a mobile wallet browser like MetaMask or Trust Wallet.");
+            }
+        }
+
+        async function executeRent() {
+            if (!contract) { alert("Please connect wallet first!"); return; }
+            
+            const days = document.getElementById('rentalDays').value;
+            try {
+                // Fetch the actual daily rate from your contract
+                const rate = await contract.dailyRate();
+                const totalPayment = rate.mul(days);
+
+                const tx = await contract.rentProperty(0, days, { value: totalPayment });
+                document.getElementById('mainBtn').innerText = "Processing Transaction...";
+                
+                await tx.wait();
+                alert("Rental Confirmed! Transaction finalized on Pharos Atlantic.");
+                document.getElementById('mainBtn').innerText = "Wallet Linked";
+            } catch (error) {
+                console.error(error);
+                alert("Transaction error: Check balance or Gas settings.");
+            }
+        }
+
+        function startExpiryTracker() {
+            setInterval(async () => {
+                if (!contract) return;
+                const rental = await contract.propertyRentals(0);
+                const expiry = rental.expiry.toNumber();
+                const now = Math.floor(Date.now() / 1000);
+                const diff = expiry - now;
+
+                if (diff > 0) {
+                    const days = Math.floor(diff / 86400);
+                    const hours = Math.floor((diff % 86400) / 3600);
+                    const minutes = Math.floor((diff % 3600) / 60);
+                    const seconds = diff % 60;
+                    document.getElementById('timeRemaining').innerText = 
+                        `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+                } else {
+                    document.getElementById('timeRemaining').innerText = "00d : 00h : 00m : 00s";
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+
