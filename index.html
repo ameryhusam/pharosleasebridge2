@@ -3,106 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharos LeaseBridge | Premium RWA Investing</title>
+    <title>LeaseBridge | Premium RWA</title>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --dark-bg: #05070a; --card-bg: #0d1117; --text-main: #ffffff; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--dark-bg); color: var(--text-main); scroll-behavior: smooth; }
+        :root { --gold: #e2b053; --bg: #030508; --card: #0a0e14; --glow: rgba(226, 176, 83, 0.2); }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
         
-        /* High-End Hero Section */
-        .hero { 
-            background: linear-gradient(rgba(5, 7, 10, 0.7), rgba(5, 7, 10, 0.9)), 
-                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80');
-            background-size: cover; background-position: center; min-height: 90vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+        /* Interactive Background */
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #030508 100%); z-index: -1; }
+
+        /* Navigation */
+        nav { padding: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logo { font-family: 'Cinzel', serif; font-size: 24px; color: var(--gold); letter-spacing: 3px; }
+
+        /* Hero Section */
+        .hero { display: flex; flex-wrap: wrap; padding: 60px 5%; align-items: center; gap: 40px; min-height: 60vh; }
+        .hero-text { flex: 1; min-width: 300px; }
+        .hero-text h1 { font-family: 'Cinzel', serif; font-size: 4rem; margin: 0; line-height: 1; }
+        .hero-text p { font-size: 1.2rem; color: #8a8a8a; margin: 20px 0; max-width: 500px; }
+
+        /* Animated Connect Button */
+        .btn-connect { 
+            background: none; border: 2px solid var(--gold); color: var(--gold); 
+            padding: 18px 40px; border-radius: 0; font-weight: 800; cursor: pointer;
+            transition: 0.4s; position: relative; overflow: hidden;
         }
-
-        h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; color: var(--gold); margin: 0; letter-spacing: 2px; }
-        .hero p { font-size: 1.2rem; max-width: 800px; line-height: 1.8; color: #cbd5e0; margin: 20px 0; }
-
-        .btn-gold { 
-            background: var(--gold); color: #000; border: none; padding: 18px 45px; 
-            border-radius: 5px; font-weight: 800; font-size: 1rem; cursor: pointer; 
-            transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
-
-        /* Project Info Section */
-        .section-info { padding: 80px 20px; max-width: 1200px; margin: 0 auto; }
-        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-        .info-card { background: var(--card-bg); padding: 40px; border-radius: 10px; border: 1px solid #1a1f26; }
-        .info-card h3 { color: var(--gold); margin-top: 0; font-size: 1.5rem; }
-
-        /* Instructions Section */
-        .how-it-works { background: #0a0c10; padding: 60px 20px; text-align: center; }
-        .steps { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; max-width: 1000px; margin: 40px auto; }
-        .step { flex: 1; min-width: 200px; }
-        .step-num { font-size: 2rem; color: var(--gold); font-weight: 800; display: block; margin-bottom: 10px; }
+        .btn-connect:hover { background: var(--gold); color: black; box-shadow: 0 0 30px var(--glow); }
 
         /* Marketplace Gallery */
-        .marketplace { padding: 80px 20px; max-width: 1200px; margin: 0 auto; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
-        .prop-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid #1a1f26; transition: 0.3s; }
-        .prop-card:hover { border-color: var(--gold); }
-        .prop-img { width: 100%; height: 250px; object-fit: cover; }
-        .prop-content { padding: 25px; }
-
-        .status-tag { display: inline-block; padding: 5px 12px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; }
-        .tag-available { background: #22c55e; color: #fff; }
-        .tag-occupied { background: #ef4444; color: #fff; }
-
-        input { background: #000; border: 1px solid #333; color: #fff; padding: 12px; width: 100%; box-sizing: border-box; margin: 15px 0; border-radius: 4px; }
-        #adminPanel { display: none; margin-top: 40px; border: 2px dashed var(--gold); padding: 30px; background: #000; border-radius: 10px; }
+        .section-title { padding-left: 5%; font-family: 'Cinzel', serif; font-size: 2rem; color: var(--gold); }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; padding: 40px 5%; }
+        
+        .prop-card { 
+            background: var(--card); border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .prop-card:hover { transform: scale(1.02); border-color: var(--gold); }
+        .prop-img { width: 100%; height: 400px; object-fit: cover; filter: grayscale(40%); transition: 0.5s; }
+        .prop-card:hover .prop-img { filter: grayscale(0%); }
+        
+        .prop-overlay { padding: 25px; background: linear-gradient(0deg, var(--card) 0%, transparent 100%); margin-top: -100px; position: relative; }
+        
+        .status { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+        input { background: transparent; border: 1px solid #333; color: white; padding: 15px; width: 100%; box-sizing: border-box; margin: 15px 0; }
+        
+        #adminPanel { display: none; padding: 50px 5%; background: #000; margin: 40px 5%; border: 1px solid var(--gold); }
     </style>
 </head>
 <body>
+    <div class="bg-glow"></div>
+
+    <nav>
+        <div class="logo">PHAROS.LB</div>
+        <div id="addr" style="font-size: 12px; opacity: 0.5;">0x00...00</div>
+    </nav>
 
     <section class="hero">
-        <h1>PHAROS LEASEBRIDGE</h1>
-        <p>Tokenizing prime real-world assets on the fastest blockchain network. Secure, transparent, and instant high-yield rental opportunities for modern investors.</p>
-        <button class="btn-gold" id="connectBtn" onclick="connect()">Connect Investment Wallet</button>
-        <p id="walletStatus" style="margin-top: 20px; color: var(--gold); font-weight: bold;"></p>
-    </section>
-
-    <section class="section-info">
-        <div class="grid-info">
-            <div class="info-card">
-                <h3>The Project</h3>
-                <p>LeaseBridge transforms physical real estate into liquid digital assets (RWA). By utilizing Pharos Atlantic, we ensure 0.5s transaction finality for all rental agreements.</p>
-            </div>
-            <div class="info-card">
-                <h3>Safe & Secure</h3>
-                <p>Every property is verified on-chain. Smart contracts handle your payments and access automatically—no middlemen, no delays, no hidden fees.</p>
-            </div>
-        </div>
-
-        <div id="adminPanel">
-            <h3 style="color: var(--gold); margin-top: 0;">ADMIN: Add Premium Property</h3>
-            <input type="text" id="pName" placeholder="Property Name (e.g., Beverly Hills Villa)">
-            <input type="text" id="pImg" placeholder="Image URL (High Quality)">
-            <button class="btn-gold" style="width: 100%;" onclick="mintRWA()">Mint New Asset</button>
+        <div class="hero-text">
+            <div class="status" style="margin-bottom: 20px;">Real World Asset Protocol</div>
+            <h1>Prime Real Estate,<br><span style="color: var(--gold)">On-Chain</span></h1>
+            <p>Access high-yield rental properties globally with instant liquidity on Pharos Atlantic.</p>
+            <button class="btn-connect" id="conBtn" onclick="smartConnect()">AUTHORIZE WALLET</button>
         </div>
     </section>
 
-    <section class="how-it-works">
-        <h2>How To Invest</h2>
-        <div class="steps">
-            <div class="step"><span class="step-num">01</span><strong>Connect</strong><p>Link your OKX or MetaMask wallet.</p></div>
-            <div class="step"><span class="step-num">02</span><strong>Select</strong><p>Choose an available high-tier property.</p></div>
-            <div class="step"><span class="step-num">03</span><strong>Profit</strong><p>Rent the asset and manage your yield.</p></div>
-        </div>
-    </section>
+    <div id="adminPanel">
+        <h2 style="font-family: 'Cinzel'; color: var(--gold);">EXECUTIVE PORTAL</h2>
+        <input type="text" id="mName" placeholder="ASSET NAME">
+        <input type="text" id="mImg" placeholder="IMAGE URL">
+        <button class="btn-connect" onclick="mint()">MINT TO REGISTRY</button>
+    </div>
 
-    <section class="marketplace" id="market">
-        <h2 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 50px;">Marketplace Gallery</h2>
-        <div id="gallery" class="gallery-grid">
-            <p style="text-align: center; grid-column: 1/-1; color: #666;">Connect wallet to view investment opportunities...</p>
+    <div class="section-title">THE COLLECTION</div>
+    <div id="gallery" class="gallery">
         </div>
-    </section>
 
     <script>
-        // Use your specific contract address
         const CONTRACT_ADDR = "0x8067fe980e975ba291752a57586dbeb09641e1c3";
         const ABI = [
             "function mintProperty(string memory _name, string memory _image) external",
@@ -114,106 +92,98 @@
             "function nextTokenId() public view returns (uint256)"
         ];
 
-        let signer, contract;
+        let provider, signer, contract;
 
-        async function connect() {
-            if (!window.ethereum) {
-                alert("No crypto wallet detected. Please install OKX or MetaMask.");
+        async function smartConnect() {
+            const btn = document.getElementById('conBtn');
+            btn.innerText = "REQUESTING ACCESS...";
+
+            // ADVANCED PROVIDER DETECTION
+            let walletProvider;
+            if (window.ethereum) {
+                if (window.ethereum.providers) {
+                    walletProvider = window.ethereum.providers.find(p => p.isOKXWallet) || 
+                                     window.ethereum.providers.find(p => p.isMetaMask) || 
+                                     window.ethereum;
+                } else {
+                    walletProvider = window.ethereum;
+                }
+            }
+
+            if (!walletProvider) {
+                alert("Please access this via OKX or MetaMask Browser");
+                btn.innerText = "AUTHORIZE WALLET";
                 return;
             }
+
             try {
-                // Initialize provider with ethers
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
+                // FORCE ACCOUNT HANDSHAKE
+                const accounts = await walletProvider.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.providers.Web3Provider(walletProvider);
                 signer = provider.getSigner();
-                const address = await signer.getAddress();
+                const userAddr = accounts[0];
                 contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
 
-                document.getElementById('walletStatus').innerText = "LINKED: " + address.substring(0,12) + "...";
-                document.getElementById('connectBtn').style.display = "none";
+                document.getElementById('addr').innerText = userAddr;
+                btn.style.display = "none";
 
-                // Check Admin Access
-                const contractOwner = await contract.owner();
-                if (address.toLowerCase() === contractOwner.toLowerCase()) {
+                const owner = await contract.owner();
+                if (userAddr.toLowerCase() === owner.toLowerCase()) {
                     document.getElementById('adminPanel').style.display = "block";
                 }
-                
-                loadGallery();
-            } catch (err) {
-                console.error(err);
-                alert("Connection failed.");
+                loadAssets();
+            } catch (e) {
+                console.error(e);
+                btn.innerText = "AUTHORIZE WALLET";
+                alert("Connection failed: User denied or Timeout.");
             }
         }
 
-        async function loadGallery() {
+        async function loadAssets() {
             const gallery = document.getElementById('gallery');
             try {
                 const total = await contract.nextTokenId();
                 gallery.innerHTML = "";
-                
-                for (let i = 0; i < total; i++) {
+                for(let i=0; i<total; i++) {
                     const info = await contract.propertyInfo(i);
-                    const rental = await contract.propertyRentals(i);
-                    const now = Math.floor(Date.now() / 1000);
-                    const isOccupied = rental.expiry > now;
+                    const rent = await contract.propertyRentals(i);
+                    const isRented = rent.expiry > (Date.now()/1000);
 
                     gallery.innerHTML += `
                         <div class="prop-card">
-                            <img src="${info.imageUri}" class="prop-img" onerror="this.src='https://via.placeholder.com/400x250?text=Premium+Asset'">
-                            <div class="prop-content">
-                                <span class="status-tag ${isOccupied ? 'tag-occupied' : 'tag-available'}">
-                                    ${isOccupied ? 'OCCUPIED' : 'AVAILABLE'}
-                                </span>
-                                <h3>${info.name}</h3>
-                                <p style="color: #666; font-size: 0.8rem;">TOKEN ID: #${i}</p>
-                                ${!isOccupied ? `
-                                    <input type="number" id="days-${i}" placeholder="Days to Lease">
-                                    <button class="btn-gold" style="width: 100%; padding: 12px;" onclick="rentAsset(${i})">Sign Lease</button>
-                                ` : `
-                                    <p style="color: var(--gold); font-size: 0.9rem;">Expires on: ${new Date(rental.expiry * 1000).toLocaleDateString()}</p>
-                                `}
+                            <img src="${info.imageUri}" class="prop-img">
+                            <div class="prop-overlay">
+                                <div class="status">${isRented ? 'Lease Active' : 'Registry: Available'}</div>
+                                <h3 style="margin:0; font-family:'Cinzel'">${info.name}</h3>
+                                ${!isRented ? `
+                                    <input type="number" id="d-${i}" placeholder="Lease Duration (Days)">
+                                    <button class="btn-connect" style="width:100%;" onclick="lease(${i})">SIGN LEASE</button>
+                                ` : `<p style="color:var(--gold)">Leased until: ${new Date(rent.expiry*1000).toLocaleDateString()}</p>`}
                             </div>
                         </div>
                     `;
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch(e) {}
         }
 
-        async function rentAsset(id) {
-            const daysInput = document.getElementById(`days-${id}`).value;
-            if (!daysInput || daysInput <= 0) return alert("Please enter valid days.");
-            
+        async function lease(id) {
+            const days = document.getElementById(`d-${id}`).value;
             try {
                 const rate = await contract.dailyRate();
-                // FIX: Use BigNumber multiplication provided by ethers
-                const totalCost = rate.mul(daysInput); 
-
-                const tx = await contract.rentProperty(id, daysInput, { value: totalCost });
-                alert("Lease transaction sent! Waiting for Pharos finality...");
+                const tx = await contract.rentProperty(id, days, { value: rate.mul(days) });
                 await tx.wait();
-                alert("Success! Lease secured.");
-                loadGallery();
-            } catch (err) {
-                console.error(err);
-                alert("Transaction error. Ensure you have enough PHAR.");
-            }
+                loadAssets();
+            } catch(e) { alert("Lease Failed: Check Gas/Balance"); }
         }
 
-        async function mintRWA() {
-            const name = document.getElementById('pName').value;
-            const img = document.getElementById('pImg').value;
-            if(!name || !img) return alert("Fill all fields");
-
+        async function mint() {
+            const n = document.getElementById('mName').value;
+            const i = document.getElementById('mImg').value;
             try {
-                const tx = await contract.mintProperty(name, img);
+                const tx = await contract.mintProperty(n, i);
                 await tx.wait();
-                alert("Asset Minted Successfully!");
-                loadGallery();
-            } catch (err) {
-                alert("Minting failed.");
-            }
+                loadAssets();
+            } catch(e) { alert("Mint Failed"); }
         }
     </script>
 </body>
