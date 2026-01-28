@@ -17,7 +17,6 @@
         }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .gold-border { border: 1px solid rgba(226, 176, 83, 0.3); }
-        .sky-glow:hover { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -25,31 +24,23 @@
     <nav class="max-w-7xl mx-auto flex justify-between items-center mb-16 glass p-5 rounded-2xl shadow-2xl">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-yellow-200 rounded-lg flex items-center justify-center font-black text-slate-900">PL</div>
-            <h1 class="text-xl font-extrabold tracking-tighter uppercase">Pharos <span class="text-[#e2b053]">LeaseBridge</span></h1>
+            <h1 class="text-xl font-extrabold tracking-tighter uppercase text-white">Pharos <span class="text-[#e2b053]">LeaseBridge</span></h1>
         </div>
-        <button id="connectBtn" onclick="init()" class="bg-sky-600 hover:bg-sky-500 text-white px-8 py-2.5 rounded-xl font-bold transition-all sky-glow text-sm tracking-tight">
+        <button id="connectBtn" onclick="init()" class="bg-sky-600 hover:bg-sky-500 text-white px-8 py-2.5 rounded-xl font-bold transition-all text-sm">
             Connect Wallet
         </button>
     </nav>
 
     <main class="max-w-7xl mx-auto space-y-10">
-        
         <section id="adminPanel" class="hidden">
-            <div class="glass gold-border p-8 rounded-3xl relative overflow-hidden">
-                <h2 class="text-[10px] font-black text-[#e2b053] uppercase tracking-[0.4em] mb-6 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-[#e2b053] rounded-full"></span> Executive Asset Control
-                </h2>
-                
+            <div class="glass gold-border p-8 rounded-3xl">
+                <h2 class="text-[10px] font-black text-[#e2b053] uppercase tracking-[0.4em] mb-6">Executive Asset Control</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="md:col-span-1 space-y-4">
-                        <button onclick="withdrawFunds()" id="withdrawBtn" class="w-full border border-amber-500/40 hover:bg-amber-500/10 text-[#e2b053] py-3 rounded-xl font-bold transition-all text-xs">
-                            Withdraw Revenue
-                        </button>
-                    </div>
+                    <button onclick="withdrawFunds()" id="withdrawBtn" class="border border-amber-500/40 text-[#e2b053] py-3 rounded-xl font-bold text-xs">Withdraw Revenue</button>
                     <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input id="pName" type="text" placeholder="Asset Name" class="bg-slate-950/80 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none text-sm">
-                        <input id="pImg" type="text" placeholder="Image URL" class="bg-slate-950/80 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none text-sm">
-                        <button onclick="mintProperty()" id="mintBtn" class="bg-[#e2b053] hover:bg-yellow-500 text-black font-black py-4 rounded-xl transition-all uppercase text-xs">Register Asset</button>
+                        <input id="pName" type="text" placeholder="Asset Name" class="bg-slate-950 border border-white/10 p-4 rounded-xl text-sm outline-none">
+                        <input id="pImg" type="text" placeholder="Image URL" class="bg-slate-950 border border-white/10 p-4 rounded-xl text-sm outline-none">
+                        <button onclick="mintProperty()" id="mintBtn" class="bg-[#e2b053] text-black font-black py-4 rounded-xl uppercase text-xs">Register Asset</button>
                     </div>
                 </div>
             </div>
@@ -57,88 +48,90 @@
 
         <section>
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-3xl font-extrabold tracking-tight">Verified Assets</h2>
-                <div id="statusIndicator" class="text-[10px] font-bold text-slate-500 flex items-center gap-2 border border-white/5 px-4 py-2 rounded-full uppercase">
+                <h2 class="text-3xl font-extrabold">Verified Assets</h2>
+                <div id="statusIndicator" class="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-2">
                     <span class="w-1.5 h-1.5 bg-red-600 rounded-full"></span> Disconnected
                 </div>
             </div>
-
             <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="col-span-full py-40 text-center glass rounded-[40px] border-dashed border-white/10">
-                    <p class="text-slate-500 text-sm font-medium">Connect wallet to Pharos Atlantic to access registry.</p>
-                </div>
+                <div class="col-span-full py-40 text-center glass rounded-[40px] text-slate-500">Connect wallet to begin.</div>
             </div>
         </section>
     </main>
 
     <script>
-        const CONFIG = {
-            network: {
-                chainId: "0xa8229", // 688689
-                chainName: "Pharos Atlantic",
-                rpcUrls: ["https://atlantic.dplabs-internal.com"],
-                nativeCurrency: { name: "PHRS", symbol: "PHRS", decimals: 18 },
-                blockExplorerUrls: ["https://atlantic.pharosscan.xyz/"]
-            },
-            address: "0x8067fe980e975ba291752a57586dbeb09641e1c3",
-            abi: [
-                "function owner() view returns (address)",
-                "function mintProperty(string _name, string _image) external",
-                "function rentProperty(uint256 _tokenId, uint64 _days) external payable",
-                "function propertyInfo(uint256) view returns (string name, string imageUri, bool isVerified)",
-                "function propertyRentals(uint256) view returns (address renter, uint64 expiry)",
-                "function dailyRate() view returns (uint256)",
-                "function nextTokenId() view returns (uint256)",
-                "function withdraw() external"
-            ]
+        const PHAROS_HEX_ID = "0xa8229"; // 688689
+        const CONTRACT_ADDR = "0x8067fe980e975ba291752a57586dbeb09641e1c3";
+        
+        // Full params only used if the chain is missing
+        const PHAROS_PARAMS = {
+            chainId: PHAROS_HEX_ID,
+            chainName: "Pharos Atlantic",
+            rpcUrls: ["https://atlantic.dplabs-internal.com"],
+            nativeCurrency: { name: "PHRS", symbol: "PHRS", decimals: 18 },
+            blockExplorerUrls: ["https://atlantic.pharosscan.xyz/"]
         };
+
+        const ABI = [
+            "function owner() view returns (address)",
+            "function mintProperty(string _name, string _image) external",
+            "function rentProperty(uint256 _tokenId, uint64 _days) external payable",
+            "function propertyInfo(uint256) view returns (string name, string imageUri, bool isVerified)",
+            "function propertyRentals(uint256) view returns (address renter, uint64 expiry)",
+            "function dailyRate() view returns (uint256)",
+            "function nextTokenId() view returns (uint256)",
+            "function withdraw() external"
+        ];
 
         let provider, signer, contract;
 
         async function init() {
-            if (!window.ethereum) return alert("Wallet not found. Use OKX or MetaMask browser.");
+            if (!window.ethereum) return alert("Please open in OKX/MetaMask.");
             const btn = document.getElementById('connectBtn');
-            
-            try {
-                // 1. SILENT SWITCH (Try switch first, only Add if missing)
-                try {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: CONFIG.network.chainId }],
-                    });
-                } catch (e) {
-                    if (e.code === 4902) {
-                        // Only add if 4902 (Chain not found)
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [CONFIG.network],
-                        });
-                    } else { throw e; }
-                }
 
-                // 2. CONNECT ACCOUNTS
+            try {
+                // 1. INITIAL ETHEREUM CONNECTION
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
-                // 3. INIT ETHERS
+                // 2. CHECK NETWORK VIA CHAIN ID ONLY
+                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+                
+                if (currentChainId !== PHAROS_HEX_ID) {
+                    try {
+                        // TRY SWITCHING USING ONLY ID
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: PHAROS_HEX_ID }],
+                        });
+                    } catch (switchError) {
+                        // ONLY IF SWITCH FAILS (CODE 4902), USE FULL PARAMS TO ADD
+                        if (switchError.code === 4902) {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [PHAROS_PARAMS],
+                            });
+                        } else { throw switchError; }
+                    }
+                }
+
+                // 3. SET UP ETHERS AFTER NETWORK IS CONFIRMED
                 provider = new ethers.BrowserProvider(window.ethereum);
                 signer = await provider.getSigner();
-                contract = new ethers.Contract(CONFIG.address, CONFIG.abi, signer);
+                contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
 
                 // 4. UI UPDATES
-                const userAddr = accounts[0];
-                btn.innerText = userAddr.substring(0,6) + "..." + userAddr.substring(38);
+                btn.innerText = accounts[0].substring(0,6) + "..." + accounts[0].substring(38);
                 btn.classList.replace('bg-sky-600', 'bg-emerald-600');
-                document.getElementById('statusIndicator').innerHTML = `<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> PHRS LIVE`;
+                document.getElementById('statusIndicator').innerHTML = `<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> PHAROS LIVE`;
 
-                // 5. ADMIN CHECK
                 const owner = await contract.owner();
-                if(userAddr.toLowerCase() === owner.toLowerCase()) {
+                if(accounts[0].toLowerCase() === owner.toLowerCase()) {
                     document.getElementById('adminPanel').classList.remove('hidden');
                 }
                 loadGallery();
             } catch (err) {
                 console.error(err);
-                if(err.code === 4001) alert("User rejected connection.");
+                btn.innerText = "Connect Wallet";
             }
         }
 
@@ -147,34 +140,21 @@
             try {
                 const total = await contract.nextTokenId();
                 gallery.innerHTML = "";
-                if (Number(total) === 0) {
-                    gallery.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 italic">No assets registered.</div>`;
-                    return;
-                }
                 for (let i = 0; i < total; i++) {
                     const info = await contract.propertyInfo(i);
                     const rental = await contract.propertyRentals(i);
                     const active = Number(rental.expiry) > Math.floor(Date.now() / 1000);
                     gallery.innerHTML += `
-                        <div class="glass rounded-[32px] overflow-hidden border border-white/5">
-                            <img src="${info.imageUri}" class="w-full h-60 object-cover" onerror="this.src='https://via.placeholder.com/400x250?text=Property'">
-                            <div class="p-6 space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="font-bold text-lg">${info.name}</h3>
-                                    <span class="text-[10px] font-bold ${active ? 'text-red-400' : 'text-emerald-400'}">
-                                        ${active ? '● RENTED' : '● AVAILABLE'}
-                                    </span>
-                                </div>
-                                ${!active ? `
-                                    <input id="days-${i}" type="number" placeholder="Days" class="w-full bg-slate-950 border border-white/5 rounded-xl px-4 py-3 text-xs outline-none focus:border-sky-500">
-                                    <button onclick="rentAsset(${i})" class="w-full bg-sky-600 py-3 rounded-xl font-bold text-xs">Rent Property</button>
-                                ` : `
-                                    <div class="bg-sky-500/5 p-4 rounded-xl text-center">
-                                        <p class="text-[9px] text-slate-500 uppercase">Lease Ends</p>
-                                        <p class="text-sm font-medium">${new Date(Number(rental.expiry) * 1000).toLocaleDateString()}</p>
-                                    </div>
-                                `}
+                        <div class="glass rounded-[32px] overflow-hidden border border-white/5 p-4">
+                            <img src="${info.imageUri}" class="w-full h-48 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/400x200'">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold">${info.name}</h3>
+                                <span class="text-[9px] font-bold ${active ? 'text-red-400' : 'text-emerald-400'}">${active ? 'RENTED' : 'AVAILABLE'}</span>
                             </div>
+                            ${!active ? `
+                                <input id="days-${i}" type="number" placeholder="Days" class="w-full bg-slate-950 border border-white/5 rounded-xl p-3 mb-2 outline-none text-xs">
+                                <button onclick="rentAsset(${i})" class="w-full bg-sky-600 py-3 rounded-xl font-bold text-xs">Rent Now</button>
+                            ` : `<div class="bg-white/5 p-3 rounded-xl text-center text-xs text-slate-400 font-mono">Expires: ${new Date(Number(rental.expiry) * 1000).toLocaleDateString()}</div>`}
                         </div>`;
                 }
             } catch (e) { console.error(e); }
@@ -185,31 +165,28 @@
             if(!days) return;
             try {
                 const rate = await contract.dailyRate();
-                const tx = await contract.rentProperty(id, days, { value: rate * BigInt(days), gasLimit: 300000 });
+                const tx = await contract.rentProperty(id, days, { value: rate * BigInt(days) });
                 await tx.wait();
                 loadGallery();
-            } catch (e) { alert("Transaction Failed"); }
+            } catch (e) { alert("Tx Failed"); }
         }
 
         async function mintProperty() {
             const name = document.getElementById('pName').value;
             const img = document.getElementById('pImg').value;
-            const btn = document.getElementById('mintBtn');
             try {
-                btn.innerText = "...";
-                const tx = await contract.mintProperty(name, img, { gasLimit: 400000 });
+                const tx = await contract.mintProperty(name, img);
                 await tx.wait();
                 loadGallery();
-            } catch (e) { alert("Admin Error"); }
-            finally { btn.innerText = "Register Asset"; }
+            } catch (e) { alert("Admin Only"); }
         }
 
         async function withdrawFunds() {
             try {
-                const tx = await contract.withdraw({ gasLimit: 150000 });
+                const tx = await contract.withdraw();
                 await tx.wait();
                 alert("Withdrawal Complete");
-            } catch (e) { alert("Admin Only"); }
+            } catch (e) { alert("Action Failed"); }
         }
     </script>
 </body>
