@@ -3,206 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharos Atlantic | Governance Portal</title>
+    <title>Pharos LeaseBridge | RWA Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+        :root { --gold: #e2b053; --sky: #38bdf8; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #0a192f 0%, #020617 100%);
-            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 20% 20%, #0f172a 0%, #020617 100%);
+            color: #f1f5f9;
             min-height: 100vh;
         }
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .pharos-glow {
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
-        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gold-border { border: 1px solid rgba(226, 176, 83, 0.3); }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <header class="max-w-4xl mx-auto flex justify-between items-center mb-12">
+    <header class="max-w-7xl mx-auto flex justify-between items-center mb-12 glass p-5 rounded-2xl">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center pharos-glow">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            </div>
-            <h1 class="text-2xl font-bold tracking-tight text-sky-400">PHAROS <span class="text-white">ATLANTIC</span></h1>
+            <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900">LB</div>
+            <h1 class="text-xl font-extrabold tracking-tighter uppercase">Pharos <span class="text-[#e2b053]">LeaseBridge</span></h1>
         </div>
-        <button id="connectBtn" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2 rounded-lg font-semibold transition-all pharos-glow">
+        <button id="connectBtn" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2 rounded-xl font-bold transition-all text-sm">
             Connect Wallet
         </button>
     </header>
 
-    <main class="max-w-4xl mx-auto space-y-8">
-        
+    <main class="max-w-7xl mx-auto space-y-10">
         <div id="walletInfo" class="hidden text-right text-sm text-sky-300 italic">
-            Connected: <span id="userAddress">0x...</span> | Network: <span id="networkName" class="font-bold">Loading...</span>
+            Connected: <span id="userAddress">0x...</span>
         </div>
 
-        <section id="adminSection" class="hidden glass p-6 rounded-2xl">
-            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-sky-400">
-                <span class="w-2 h-2 bg-sky-400 rounded-full"></span> Create Proposal (Admin Only)
+        <section id="adminSection" class="hidden glass gold-border p-8 rounded-3xl animate-in fade-in slide-in-from-top-4 duration-500">
+            <h2 class="text-[10px] font-black text-[#e2b053] uppercase tracking-[0.4em] mb-6 flex items-center gap-2">
+                <span class="w-2 h-2 bg-[#e2b053] rounded-full"></span> Executive Asset Control
             </h2>
-            <div class="flex gap-4">
-                <input id="proposalTitle" type="text" placeholder="Describe your proposal..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500 text-white">
-                <button onclick="createProposal()" class="bg-sky-600 hover:bg-sky-500 px-6 py-2 rounded-lg font-medium transition-colors">Submit</button>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <button onclick="withdrawFunds()" id="withdrawBtn" class="border border-amber-500/40 text-[#e2b053] py-3 rounded-xl font-bold text-xs hover:bg-amber-500/10 transition-all">Withdraw Revenue</button>
+                <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input id="pName" type="text" placeholder="Asset Name" class="bg-slate-950/80 border border-white/10 p-4 rounded-xl text-sm outline-none focus:border-amber-500">
+                    <input id="pImg" type="text" placeholder="Image URL" class="bg-slate-950/80 border border-white/10 p-4 rounded-xl text-sm outline-none focus:border-amber-500">
+                    <button onclick="mintProperty()" id="mintBtn" class="bg-[#e2b053] hover:bg-yellow-500 text-black font-black py-4 rounded-xl transition-all uppercase text-xs">Register RWA</button>
+                </div>
             </div>
         </section>
 
-        <section class="glass p-6 rounded-2xl">
-            <h2 class="text-xl font-bold mb-6 text-white">Live Governance Proposals</h2>
-            <div id="proposalList" class="space-y-4">
-                <p class="text-slate-500 italic text-center py-8">Please connect your wallet to view active polls.</p>
+        <section>
+            <h2 class="text-3xl font-extrabold tracking-tight mb-8">Verified Property Gallery</h2>
+            <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <p class="col-span-full text-center text-slate-500 italic py-20 glass rounded-3xl">Connect wallet to view active leases.</p>
             </div>
         </section>
-
     </main>
 
     <script>
-        // NETWORK PARAMETERS (PHAROS ATLANTIC)
-        const PHAROS_HEX_ID = "0xa8229"; // Hex for 688689
-        const PHAROS_NETWORK = {
-            chainId: PHAROS_HEX_ID,
-            chainName: "Pharos Atlantic",
-            rpcUrls: ["https://atlantic.dplabs-internal.com"],
-            nativeCurrency: { name: "PHRS", symbol: "PHRS", decimals: 18 },
-            blockExplorerUrls: ["https://atlantic.pharosscan.xyz/"]
-        };
-
-        const contractAddress = "0x807cd20e984a540810f67eac788f3618b889a285";
-        const contractABI = [
-            "function createProposal(string _title) external",
-            "function vote(uint256 _id, bool _support) external",
-            "function closeProposal(uint256 _id) external",
-            "function proposalCount() view returns (uint256)",
-            "function proposals(uint256) view returns (string title, uint256 yesVotes, uint256 noVotes, bool active)",
-            "function admin() view returns (address)"
+        const PHAROS_HEX_ID = "0xa8229"; // 688689
+        const CONTRACT_ADDR = "0x8067fe980e975ba291752a57586dbeb09641e1c3";
+        const ABI = [
+            "function owner() view returns (address)",
+            "function mintProperty(string _name, string _image) external",
+            "function rentProperty(uint256 _tokenId, uint64 _days) external payable",
+            "function propertyInfo(uint256) view returns (string name, string imageUri, bool isVerified)",
+            "function propertyRentals(uint256) view returns (address renter, uint64 expiry)",
+            "function dailyRate() view returns (uint256)",
+            "function nextTokenId() view returns (uint256)",
+            "function withdraw() external"
         ];
 
         let provider, signer, contract;
 
+        // --- THE "SMOOTH" CONNECT LOGIC ---
         async function connect() {
-            if (!window.ethereum) return alert("MetaMask not found!");
+            if (window.ethereum) {
+                try {
+                    // 1. Establish initial wallet link
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    const accounts = await provider.send("eth_requestAccounts", []);
+                    signer = await provider.getSigner();
+                    const addr = accounts[0];
 
-            try {
-                // 1. Initial Connection
-                provider = new ethers.BrowserProvider(window.ethereum);
-                const accounts = await provider.send("eth_requestAccounts", []);
-                signer = await provider.getSigner();
-                const userAddr = accounts[0];
-
-                // 2. CHECK & SWITCH NETWORK (Smooth Flow)
-                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-                
-                if (currentChainId !== PHAROS_HEX_ID) {
-                    try {
-                        // Try switching first
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: PHAROS_HEX_ID }],
-                        });
-                    } catch (switchError) {
-                        // Error 4902 means the network is not added to the wallet
-                        if (switchError.code === 4902) {
+                    // 2. Network Check (Only switch if wrong)
+                    const network = await provider.getNetwork();
+                    if (network.chainId !== BigInt(688689)) {
+                        try {
                             await window.ethereum.request({
-                                method: 'wallet_addEthereumChain',
-                                params: [PHAROS_NETWORK],
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: PHAROS_HEX_ID }],
                             });
-                        } else {
-                            throw switchError;
+                            // Refresh provider after switch
+                            provider = new ethers.BrowserProvider(window.ethereum);
+                            signer = await provider.getSigner();
+                        } catch (err) {
+                            if (err.code === 4902) alert("Please add Pharos Atlantic to your wallet.");
                         }
                     }
-                    // Re-sync after switch
-                    provider = new ethers.BrowserProvider(window.ethereum);
-                    signer = await provider.getSigner();
-                }
 
-                // 3. INIT CONTRACT
-                contract = new ethers.Contract(contractAddress, contractABI, signer);
-                
-                // 4. UI UPDATE
-                document.getElementById('userAddress').innerText = userAddr.substring(0,6) + "..." + userAddr.substring(38);
-                document.getElementById('networkName').innerText = "Pharos Atlantic";
-                document.getElementById('walletInfo').classList.remove('hidden');
-                document.getElementById('connectBtn').innerText = "Wallet Linked";
-                document.getElementById('connectBtn').classList.replace('bg-sky-600', 'bg-green-600');
-                
-                // Show Admin Panel if Owner
-                const adminAddr = await contract.admin();
-                if(userAddr.toLowerCase() === adminAddr.toLowerCase()) {
-                    document.getElementById('adminSection').classList.remove('hidden');
-                }
+                    contract = new ethers.Contract(CONTRACT_ADDR, ABI, signer);
 
-                loadProposals();
-            } catch (err) {
-                console.error(err);
-                if (err.code === 4001) alert("Connection rejected.");
+                    // 3. UI Update
+                    document.getElementById('userAddress').innerText = addr.substring(0,6) + "..." + addr.substring(38);
+                    document.getElementById('walletInfo').classList.remove('hidden');
+                    document.getElementById('connectBtn').innerText = "Wallet Linked";
+                    document.getElementById('connectBtn').classList.replace('bg-sky-600', 'bg-emerald-600');
+
+                    // 4. Admin Check
+                    const contractOwner = await contract.owner();
+                    if (addr.toLowerCase() === contractOwner.toLowerCase()) {
+                        document.getElementById('adminSection').classList.remove('hidden');
+                    }
+
+                    loadGallery();
+                } catch (err) {
+                    console.error(err);
+                    alert("Connection failed.");
+                }
+            } else {
+                alert("Web3 wallet not found.");
             }
         }
 
-        async function loadProposals() {
-            const list = document.getElementById('proposalList');
+        async function loadGallery() {
+            const list = document.getElementById('gallery');
             try {
-                const count = await contract.proposalCount();
+                const count = await contract.nextTokenId();
                 list.innerHTML = "";
-                if (count == 0) {
-                    list.innerHTML = "<p class='text-center text-slate-500'>No proposals found yet.</p>";
+                if (Number(count) === 0) {
+                    list.innerHTML = "<p class='col-span-full text-center text-slate-500'>No properties found.</p>";
                     return;
                 }
 
-                for (let i = 1; i <= count; i++) {
-                    const p = await contract.proposals(i);
+                for (let i = 0; i < Number(count); i++) {
+                    const info = await contract.propertyInfo(i);
+                    const rental = await contract.propertyRentals(i);
+                    const isRented = Number(rental.expiry) > Math.floor(Date.now() / 1000);
+
                     list.innerHTML += `
-                        <div class="bg-slate-900/60 border border-slate-800 p-6 rounded-xl shadow-xl transition-all hover:border-sky-900">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <span class="text-xs font-mono text-sky-500 uppercase tracking-widest">Proposal #${i}</span>
-                                    <h3 class="text-xl font-semibold text-white mt-1">${p.title}</h3>
+                        <div class="glass rounded-[32px] overflow-hidden border border-white/5 transition-all hover:border-[#e2b053]/30">
+                            <img src="${info.imageUri}" class="w-full h-52 object-cover" onerror="this.src='https://via.placeholder.com/400x200'">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-bold text-lg">${info.name}</h3>
+                                    <span class="text-[10px] font-bold ${isRented ? 'text-red-400' : 'text-emerald-400'}">
+                                        ${isRented ? '● OCCUPIED' : '● AVAILABLE'}
+                                    </span>
                                 </div>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold ${p.active ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">
-                                    ${p.active ? '● OPEN' : '● CLOSED'}
-                                </span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 mb-6">
-                                <div class="bg-slate-800/40 p-3 rounded-lg text-center">
-                                    <p class="text-slate-400 text-xs uppercase">Yes</p>
-                                    <p class="text-xl font-bold text-green-400">${p.yesVotes.toString()}</p>
-                                </div>
-                                <div class="bg-slate-800/40 p-3 rounded-lg text-center">
-                                    <p class="text-slate-400 text-xs uppercase">No</p>
-                                    <p class="text-xl font-bold text-red-400">${p.noVotes.toString()}</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                ${p.active ? `
-                                    <button onclick="vote(${i}, true)" class="flex-1 bg-green-600 hover:bg-green-500 text-white py-2 rounded-lg font-semibold transition-all">VOTE YES</button>
-                                    <button onclick="vote(${i}, false)" class="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg font-semibold transition-all">VOTE NO</button>
-                                ` : `<div class="w-full text-center py-2 bg-slate-800 rounded-lg text-slate-500 font-medium">Voting Finalized</div>`}
+                                ${!isRented ? `
+                                    <input id="days-${i}" type="number" placeholder="Duration (Days)" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 mb-2 outline-none text-sm focus:border-sky-500">
+                                    <button onclick="rentAsset(${i})" class="w-full bg-sky-600 py-3 rounded-xl font-bold text-xs uppercase tracking-widest">Sign Lease</button>
+                                ` : `
+                                    <div class="bg-sky-500/10 p-4 rounded-xl text-center">
+                                        <p class="text-[9px] text-sky-400 uppercase font-black">Expiry Date</p>
+                                        <p class="text-sm font-medium">${new Date(Number(rental.expiry) * 1000).toLocaleDateString()}</p>
+                                    </div>
+                                `}
                             </div>
                         </div>`;
                 }
             } catch (err) { console.error(err); }
         }
 
-        async function createProposal() {
-            const title = document.getElementById('proposalTitle').value;
-            if(!title) return;
-            const tx = await contract.createProposal(title);
-            await tx.wait();
-            loadProposals();
+        async function rentAsset(id) {
+            const days = document.getElementById(`days-${id}`).value;
+            if(!days) return alert("Enter days");
+            try {
+                const rate = await contract.dailyRate();
+                const tx = await contract.rentProperty(id, days, { value: rate * BigInt(days) });
+                await tx.wait();
+                loadGallery();
+            } catch (err) { alert("Tx failed."); }
         }
 
-        async function vote(id, support) {
-            const tx = await contract.vote(id, support);
-            await tx.wait();
-            loadProposals();
+        async function mintProperty() {
+            const name = document.getElementById('pName').value;
+            const img = document.getElementById('pImg').value;
+            try {
+                const tx = await contract.mintProperty(name, img);
+                await tx.wait();
+                loadGallery();
+            } catch (err) { alert("Admin Only"); }
+        }
+
+        async function withdrawFunds() {
+            try {
+                const tx = await contract.withdraw();
+                await tx.wait();
+                alert("Withdrawal successful.");
+            } catch (err) { alert("Action failed."); }
         }
 
         document.getElementById('connectBtn').addEventListener('click', connect);
